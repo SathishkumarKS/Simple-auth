@@ -1,9 +1,11 @@
 import { connect } from 'react-redux'
 import { login, logout, changeEmail, changePassword } from './state';
-import Auth from './auth';
+import Auth from './Auth';
 
-const stateMap = (state) => ({
-
+const stateMap = ({ auth }) => ({
+  isLoading: auth.request.inFlight,
+  email: auth.email,
+  password: auth.password
 });
 
 const dispatchMap = (dispatch) => ({

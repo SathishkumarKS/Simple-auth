@@ -7,8 +7,8 @@ const CHANGE_EMAIL = 'CHANGE_EMAIL';
 const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 
 const initialState = {
-  email: 'max@test.com',
-  password: '12345',
+  email: '', // max@test.com
+  password: '', // 12345
   request: {
     inFlight: false,
     fetched: false,
@@ -64,7 +64,7 @@ export const login = () => async (dispatch, getState) => {
 
     dispatch(authRequest());
 
-    const { email, password } = getState().auth;
+    const { email, password    } = getState().auth;
     const user = await API.auth.login({email, password});
 
     console.info('USER LOGIN SUCCESS');
@@ -97,10 +97,10 @@ export const logout = () => (dispatch) => {
 
 export const changeEmail = (email) => ({
   type: CHANGE_EMAIL,
-  email
+  payload: email
 });
 
 export const changePassword = (password) => ({
   type: CHANGE_PASSWORD,
-  password
+  payload: password
 });
