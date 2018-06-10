@@ -5,7 +5,8 @@ import Auth from './Auth';
 const stateMap = ({ auth }) => ({
   isLoading: auth.request.inFlight,
   email: auth.email,
-  password: auth.password
+  password: auth.password,
+  errorMessage: auth.request.error
 });
 
 const dispatchMap = (dispatch) => ({

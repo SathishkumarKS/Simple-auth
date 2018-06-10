@@ -1,49 +1,47 @@
 import React from 'react';
-import { withState, branch, renderComponent, compose, lifecycle } from 'recompose';
+import { withHandlers } from 'recompose';
 import Input from '../generic/Input';
+import Button from '../generic/Button';
+import Spinner from '../helpers/Spinner';
+import ErrorMessage from '../helpers/ErrorMessage';
 
-const Auth = ({ login, logout, changeEmail, changePassword, age, changeAge, email, password, isLoading }) => {
-  console.log(isLoading);
-  return (
-    <div style={styles.container}>
-      <Input value={email} onChange={changeEmail} />
-      <Input value={password} onChange={changePassword} type='password' />
-      <button onClick={login}>Login</button>
-      {age}
-      <button onClick={() => changeAge(age + 1)}>+1</button>
-    </div>
-  );
-};
-
-const Spinner = () => (
-  <div>
-    SPINNER
+const Auth = ({ login, logout, changeEmail, changePassword, age, changeAge, email, password, isLoading, errorMessage }) => (
+  <div style={styles.container}>
+    <Input value={email} onChange={changeEmail} onEnter={login} />
+    <Input value={password} onChange={changePassword} onEnter={login} type='password' />
+    {errorMessage && <ErrorMessage text={errorMessage} />}
+    <Button onClick={login} text='Login' />
+    {isLoading && <Spinner customStyle={{with: 250, height: 250}} />}
   </div>
-)
-
-const enhance = compose(
-  branch(
-    props => props.isLoading,
-    renderComponent(Spinner)
-  ),
-  lifecycle({
-    componentDidMount() {
-      console.log('mounted');
-    }
-  }),
-  withState(
-    'age',
-    'changeAge',
-    22
-  )
 );
 
-export default enhance(Auth);
+export default withHandlers({
+  changeEmail: ({ changeEmail, isLoading }) => (value) => {
+    if (!isLoading) {
+      changeEmail(value);
+    }
+  },
+  changePassword: ({ changePassword, isLoading }) => (value) => {
+    if (!isLoading) {
+      changePassword(value);
+    }
+  },
+  login: ({ login, isLoading }) => () => {
+    if (!isLoading) {
+      login();
+    }
+  },
+  logout: ({ logout, isLoading }) => () => {
+    if (!isLoading) {
+      logout();
+    }
+  }
+})(Auth);
 
 const styles = {
   container: {
     display: 'flex',
     flexFlow: 'column nowrap',
-    alignItems: 'flex-start'
+    alignItems: 'center'
   }
 }

@@ -1,30 +1,37 @@
 import React from 'react';
-import { withState, compose } from 'recompose';
+import { withState, compose, withHandlers } from 'recompose';
 import icons from '../../assets/icons';
 
-const withPassword = (Component) => ({passwordShown, showPassword, type, ...rest}) => (
-  <div style={styles.container}>
+const withPassword = (Component) => ({passwordShown, showPassword, hidePassword, type, ...rest}) => (
+  <span style={styles.container}>
     <Component {...rest} type={passwordShown ? 'text' : type} />
     <img
-      onMouseDown={() => showPassword(true)}
-      onMouseUp={() => showPassword(false)}
-      onMouseLeave={() => showPassword(false)}
+      onMouseDown={showPassword}
+      onMouseUp={hidePassword}
+      onMouseLeave={hidePassword}
       src={passwordShown ? icons.eyeOpen : icons.eyeClose}
       alt='eye'
       style={styles.icon}
     />
-  </div>
+  </span>
 );
 
 export default compose(
-  withState('passwordShown', 'showPassword', false),
+  withState('passwordShown', 'setPassword', false),
+  withHandlers({
+    showPassword: ({ setPassword }) => () => {
+      setPassword(true);
+    },
+    hidePassword: ({ setPassword }) => () => {
+      setPassword(false);
+    },
+  }),
   withPassword
 );
 
 const styles = {
   container: {
-    position: 'relative',
-    display: 'inline-block'
+    position: 'relative'
   },
   icon: {
     width: 14,

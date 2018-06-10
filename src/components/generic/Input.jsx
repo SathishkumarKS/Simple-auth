@@ -3,8 +3,14 @@ import PropTypes from 'prop-types'
 import { compose, setPropTypes, withHandlers, defaultProps, branch } from 'recompose';
 import withPassword from './withPassword';
 
-const Input = ({ value, onChange, type, customStyle }) => (
-  <input value={value} onChange={onChange} type={type} style={customStyle} />
+const Input = ({ value, onChange, type, customStyle, onKeyPress }) => (
+  <input
+    value={value}
+    onChange={onChange}
+    type={type}
+    style={customStyle}
+    onKeyPress={onKeyPress}
+  />
 );
 
 const enhance = compose(
@@ -21,12 +27,15 @@ const enhance = compose(
     type: 'text'
   }),
   withHandlers({
-    onChange: props => event => {
-      props.onChange(event.target.value);
+    onChange: ({ onChange }) => ({ target }) => {
+      onChange(target.value);
+    },
+    onKeyPress: ({ onEnter }) => ({ key }) => {
+      if (key === 'Enter') onEnter();
     }
   }),
   branch(
-    props => props.type === 'password',
+    (props) => props.type === 'password',
     withPassword
   )
 );

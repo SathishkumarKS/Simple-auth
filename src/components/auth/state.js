@@ -7,8 +7,8 @@ const CHANGE_EMAIL = 'CHANGE_EMAIL';
 const CHANGE_PASSWORD = 'CHANGE_PASSWORD';
 
 const initialState = {
-  email: '', // max@test.com
-  password: '', // 12345
+  email: 'max@test.com',
+  password: '12345',
   request: {
     inFlight: false,
     fetched: false,
@@ -38,6 +38,7 @@ export default (state = initialState, {type, payload}) => {
     case AUTH_REQUEST_FAILED:
       return {
         ...state,
+        password: initialState.password,
         request: {
           ...initialState.request,
           error: payload
@@ -46,12 +47,20 @@ export default (state = initialState, {type, payload}) => {
     case CHANGE_EMAIL:
       return {
         ...state,
-        email: payload
+        email: payload,
+        request: {
+          ...state.request,
+          error: initialState.request.error
+        }
       };
     case CHANGE_PASSWORD:
       return {
         ...state,
-        password: payload
+        password: payload,
+        request: {
+          ...state.request,
+          error: initialState.request.error
+        }
       };
     default:
       return state;
@@ -64,7 +73,7 @@ export const login = () => async (dispatch, getState) => {
 
     dispatch(authRequest());
 
-    const { email, password    } = getState().auth;
+    const { email, password } = getState().auth;
     const user = await API.auth.login({email, password});
 
     console.info('USER LOGIN SUCCESS');
@@ -73,7 +82,7 @@ export const login = () => async (dispatch, getState) => {
   } catch (error) {
     console.error('USER LOGIN FAILED', error);
 
-    dispatch(authRequestFailed(error));
+    dispatch(authRequestFailed(error.message));
   }
 };
 
@@ -88,7 +97,7 @@ const authRequestSuccess = (user) => ({
 
 const authRequestFailed = (error) => ({
   type: AUTH_REQUEST_FAILED,
-  error
+  payload: error
 });
 
 export const logout = () => (dispatch) => {
