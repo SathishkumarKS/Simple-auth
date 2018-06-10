@@ -8,7 +8,7 @@ const Input = ({ value, onChange, type, customStyle, onKeyPress }) => (
     value={value}
     onChange={onChange}
     type={type}
-    style={customStyle}
+    style={{...styles.input, ...customStyle}}
     onKeyPress={onKeyPress}
   />
 );
@@ -41,3 +41,11 @@ const enhance = compose(
 );
 
 export default enhance(Input);
+
+const styles = {
+  input: {
+    padding: 2,
+    borderRadius: 4,
+    outline: 'none'
+  }
+}

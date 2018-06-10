@@ -34,12 +34,12 @@ const styles = {
     position: 'relative'
   },
   icon: {
-    width: 14,
-    height: 14,
     position: 'absolute',
     right: 0,
     top: 0,
     bottom: 0,
+    width: 14,
+    height: 14,
     margin: 'auto 4px',
     cursor: 'pointer'
   }
