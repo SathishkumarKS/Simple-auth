@@ -1,25 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types'
+import { Field } from 'redux-form'
 import { compose, setPropTypes, withHandlers, defaultProps, branch } from 'recompose';
 import withPassword from './withPassword';
+import withError from './withError';
 
-const Input = ({ value, onChange, type, customStyle, onKeyPress }) => (
-  <input
-    value={value}
-    onChange={onChange}
+const Input = ({ name, type, customStyle }) => (
+  <Field
+    name={name}
+    component="input"
     type={type}
-    style={{...styles.input, ...customStyle}}
-    onKeyPress={onKeyPress}
+    style={{...styles, ...customStyle}}
   />
 );
 
 const enhance = compose(
   setPropTypes({
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number
-    ]).isRequired,
-    onChange: PropTypes.func.isRequired,
     type: PropTypes.string,
     customStyle: PropTypes.object
   }),
@@ -27,9 +23,6 @@ const enhance = compose(
     type: 'text'
   }),
   withHandlers({
-    onChange: ({ onChange }) => ({ target }) => {
-      onChange(target.value);
-    },
     onKeyPress: ({ onEnter }) => ({ key }) => {
       if (key === 'Enter') onEnter();
     }
@@ -37,7 +30,8 @@ const enhance = compose(
   branch(
     (props) => props.type === 'password',
     withPassword
-  )
+  ),
+  withError
 );
 
 export default enhance(Input);

@@ -1,42 +1,20 @@
 import React from 'react';
-import { withHandlers } from 'recompose';
 import Input from '../generic/Input';
 import Button from '../generic/Button';
 import Spinner from '../helpers/Spinner';
 import ErrorMessage from '../helpers/ErrorMessage';
 
-const Auth = ({ login, logout, changeEmail, changePassword, age, changeAge, email, password, isLoading, errorMessage }) => (
-  <div style={styles.container}>
-    <Input value={email} onChange={changeEmail} onEnter={login} />
-    <Input value={password} onChange={changePassword} onEnter={login} type='password' />
+const Auth = ({ handleLogin, logout, isLoading, errorMessage, emailValidationError, passwordValidationError }) => (
+  <form style={styles.container} onSubmit={handleLogin}>
+    <Input name='email' errorMessage={emailValidationError} />
+    <Input name='password' type='password' errorMessage={passwordValidationError} />
     {errorMessage && <ErrorMessage text={errorMessage} />}
-    <Button onClick={login} text='Login' />
+    <Button onClick={handleLogin} text='Login' type="submit" />
     {isLoading && <Spinner customStyle={{with: 250, height: 250}} />}
-  </div>
+  </form>
 );
 
-export default withHandlers({
-  changeEmail: ({ changeEmail, isLoading }) => (value) => {
-    if (!isLoading) {
-      changeEmail(value);
-    }
-  },
-  changePassword: ({ changePassword, isLoading }) => (value) => {
-    if (!isLoading) {
-      changePassword(value);
-    }
-  },
-  login: ({ login, isLoading }) => () => {
-    if (!isLoading) {
-      login();
-    }
-  },
-  logout: ({ logout, isLoading }) => () => {
-    if (!isLoading) {
-      logout();
-    }
-  }
-})(Auth);
+export default Auth;
 
 const styles = {
   container: {

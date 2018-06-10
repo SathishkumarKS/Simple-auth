@@ -1,19 +1,50 @@
-import { connect } from 'react-redux'
-import { login, logout, changeEmail, changePassword } from './state';
+import { connect } from 'react-redux';
+import { compose, withHandlers } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { validate } from '../../helpers/validation';
+import { login, logout } from './state';
 import Auth from './Auth';
 
-const stateMap = ({ auth }) => ({
-  isLoading: auth.request.inFlight,
-  email: auth.email,
-  password: auth.password,
-  errorMessage: auth.request.error
+const stateMap = ({ auth : { error, inFlight }, form, form: { authForm: { values: { email, password } } } }) => ({
+  email,
+  password,
+  isLoading: inFlight,
+  errorMessage: error,
+  emailValidationError: form.authForm.syncErrors && form.authForm.syncErrors.email,
+  passwordValidationError: form.authForm.syncErrors && form.authForm.syncErrors.password
 });
 
 const dispatchMap = (dispatch) => ({
   login: () => dispatch(login()),
-  logout: () => dispatch(logout()),
-  changeEmail: (email) => dispatch(changeEmail(email)),
-  changePassword: (password) => dispatch(changePassword(password))
+  logout: () => dispatch(logout())
 });
 
-export default connect(stateMap, dispatchMap)(Auth);
+const enhance = compose(
+  reduxForm({
+    form: 'authForm',
+    validate,
+    initialValues : {
+      email: '',
+      password: ''
+    }
+  }),
+  connect(stateMap, dispatchMap),
+  withHandlers({
+    handleLogin: ({ login, isLoading, emailValidationError, passwordValidationError }) => (event) => {
+      event && event.preventDefault();
+      
+      const preventLogin = isLoading || emailValidationError || passwordValidationError;
+
+      if (!preventLogin) {
+        login();
+      }
+    },
+    logout: ({ logout, isLoading }) => () => {
+      if (!isLoading) {
+        logout();
+      }
+    }
+  })
+);
+
+export default enhance(Auth);

@@ -1,12 +1,15 @@
 import React from 'react';
+import { defaultProps } from 'recompose';
 
-const Button = ({ onClick, text }) => (
-  <button onClick={onClick} style={styles.button} type='button' >
+const Button = ({ onClick, text, type }) => (
+  <button onClick={onClick} style={styles.button} type={type} >
     {text}
   </button>
 );
 
-export default Button;
+export default defaultProps({
+  type: 'button'
+})(Button);
 
 const styles = {
   button: {
