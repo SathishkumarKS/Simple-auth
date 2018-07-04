@@ -1,4 +1,4 @@
-Simple auth form for practicing with some popular react features.
+Simple auth form for practicing with some popular react libs.
 
 Recompose - https://github.com/acdlite/recompose
 
